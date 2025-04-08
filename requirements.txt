@@ -1,0 +1,11 @@
+Django>=4.2.0,<5.0.0
+djangorestframework>=3.14.0
+djangorestframework-simplejwt>=5.3.0
+django-cors-headers>=4.3.0
+python-dotenv>=1.0.0
+drf-spectacular>=0.28.0
+# For PostgreSQL (commented out for now, uncomment when needed)
+# psycopg2-binary>=2.9.9
+# For Celery (commented out for now, uncomment when needed)
+# celery>=5.3.0
+# redis>=5.0.0 
