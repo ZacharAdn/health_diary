@@ -1,0 +1,82 @@
+{% extends "admin/login.html" %}
+{% load static %}
+
+{% block title %}Health Diary - Admin Login{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<style>
+    :root {
+        --primary: #34a9a1;
+        --secondary: #6ac0b9;
+        --accent: #f5f5f5;
+        --primary-fg: #fff;
+    }
+    
+    #header {
+        background: var(--primary);
+        color: var(--primary-fg);
+    }
+    
+    .login #header {
+        height: auto;
+        padding: 15px 16px;
+    }
+    
+    .login #header h1 {
+        font-size: 18px;
+    }
+    
+    .login #header h1 a {
+        color: var(--primary-fg);
+    }
+    
+    .login .form-row #id_username, .login .form-row #id_password {
+        border-radius: 4px;
+    }
+    
+    .submit-row input {
+        background: var(--primary);
+    }
+    
+    .module h2, .module caption, .inline-group h2 {
+        background: var(--primary);
+    }
+    
+    div.breadcrumbs {
+        background: var(--secondary);
+    }
+    
+    .selector-chosen h2 {
+        background: var(--secondary) !important;
+    }
+    
+    .button, input[type=submit], input[type=button], .submit-row input, a.button {
+        background: var(--primary);
+    }
+    
+    .button.default, input[type=submit].default, .submit-row input.default {
+        background: var(--primary);
+    }
+    
+    .button:active, input[type=submit]:active, input[type=button]:active, .button:focus, input[type=submit]:focus, input[type=button]:focus, .button:hover, input[type=submit]:hover, input[type=button]:hover {
+        background: var(--secondary);
+    }
+    
+    .button.default:active, input[type=submit].default:active, .button.default:focus, input[type=submit].default:focus, .button.default:hover, input[type=submit].default:hover {
+        background: var(--secondary);
+    }
+</style>
+{% endblock %}
+
+{% block branding %}
+<h1 id="site-name">
+    <a href="{% url 'admin:index' %}">
+        Health Diary Administration
+    </a>
+</h1>
+{% endblock %}
+
+{% block content_title %}
+<h1>Health Diary Management System</h1>
+{% endblock %} 

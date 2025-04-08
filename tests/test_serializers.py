@@ -9,6 +9,7 @@ from core.serializers import (
     HealthLogSerializer,
     SleepSerializer
 )
+from unittest.mock import Mock
 
 pytestmark = pytest.mark.django_db
 
@@ -81,18 +82,82 @@ class TestMealSerializer:
         assert serializer.data['user'] == meal.user.id
 
     def test_deserialize_meal_with_foods(self, user, food):
+        """Test deserializing a meal with foods"""
         data = {
             'user': user.id,
             'date_time': '2024-04-08T12:00:00Z',
             'meal_type': 'lunch',
             'notes': 'Test meal',
-            'foods': [{'food_id': food.id, 'amount': 100}]
+            'foods': [
+                {'food_id': food.id, 'amount': 100, 'notes': 'Test food'}
+            ]
         }
+        
         serializer = MealSerializer(data=data)
         assert serializer.is_valid()
         meal = serializer.save()
+        
         assert meal.meal_type == 'lunch'
         assert meal.mealfood_set.count() == 1
+        assert meal.mealfood_set.first().food == food
+        assert meal.mealfood_set.first().amount == 100
+    
+    def test_update_meal_with_foods(self, meal, food):
+        """Test updating a meal with new foods"""
+        # Original meal should have no foods
+        assert meal.mealfood_set.count() == 0
+        
+        update_data = {
+            'meal_type': 'dinner',  # Changed from original
+            'notes': 'Updated meal notes',
+            'foods': [
+                {'food_id': food.id, 'amount': 150, 'notes': 'Added in update'}
+            ]
+        }
+        
+        serializer = MealSerializer(
+            instance=meal, 
+            data=update_data, 
+            partial=True,
+            context={'request': Mock(user=meal.user)}
+        )
+        
+        assert serializer.is_valid()
+        updated_meal = serializer.save()
+        
+        # Check fields were updated
+        assert updated_meal.id == meal.id  # Same instance
+        assert updated_meal.meal_type == 'dinner'  # Updated
+        assert updated_meal.notes == 'Updated meal notes'  # Updated
+        
+        # Check foods were added
+        assert updated_meal.mealfood_set.count() == 1
+        meal_food = updated_meal.mealfood_set.first()
+        assert meal_food.food == food
+        assert meal_food.amount == 150
+        assert meal_food.notes == 'Added in update'
+    
+    def test_update_meal_without_foods(self, meal):
+        """Test updating a meal without changing foods"""
+        update_data = {
+            'meal_type': 'snack',
+            'notes': 'Only basic fields updated'
+        }
+        
+        serializer = MealSerializer(
+            instance=meal, 
+            data=update_data, 
+            partial=True,
+            context={'request': Mock(user=meal.user)}
+        )
+        
+        assert serializer.is_valid()
+        updated_meal = serializer.save()
+        
+        # Check fields were updated but no foods were added
+        assert updated_meal.meal_type == 'snack'
+        assert updated_meal.notes == 'Only basic fields updated'
+        assert updated_meal.mealfood_set.count() == 0
 
 class TestHealthLogSerializer:
     def test_serialize_health_log(self, health_log):

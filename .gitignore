@@ -75,4 +75,4 @@ celerybeat.pid
 
 # Docker
 Dockerfile
-docker-compose.yml 
+docker-compose.yml /health_diary_venv/

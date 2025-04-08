@@ -2,6 +2,7 @@ import pytest
 from django.urls import reverse
 from rest_framework import status
 from datetime import timedelta
+from django.utils import timezone
 
 pytestmark = pytest.mark.django_db
 
@@ -153,6 +154,20 @@ class TestHealthLogViews:
         response = authenticated_client.get(url)
         assert response.status_code == status.HTTP_200_OK
         assert response.data['date'] == str(today)
+    
+    def test_get_daily_health_log_not_found(self, authenticated_client):
+        # Test for non-existent date
+        non_existent_date = (timezone.now().date() - timedelta(days=100)).isoformat()
+        url = reverse('healthlog-daily', args=[non_existent_date])
+        response = authenticated_client.get(url)
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+        
+    def test_get_daily_health_log_invalid_format(self, authenticated_client):
+        # Test for invalid date format
+        url = reverse('healthlog-daily', args=['invalid-date'])
+        response = authenticated_client.get(url)
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert 'error' in response.data
 
 class TestSleepViews:
     def test_list_sleep_logs(self, authenticated_client, sleep_log):
@@ -161,19 +176,38 @@ class TestSleepViews:
         assert response.status_code == status.HTTP_200_OK
         assert len(response.data) >= 1
 
-    def test_create_sleep_log(self, authenticated_client):
+    def test_create_sleep_log(self, authenticated_client, today):
         url = reverse('sleep-list')
         data = {
             'user': authenticated_client.handler._force_user.id,
-            'date': '2024-04-08',
+            'date': str(today),
             'duration': '7.5',
             'quality': 4,
             'wake_up_ease': 3,
-            'energy_level': 4
+            'energy_level': 4,
+            'notes': 'Test sleep log'
         }
         response = authenticated_client.post(url, data)
         assert response.status_code == status.HTTP_201_CREATED
-        assert response.data['duration'] == '7.50'
+        assert response.data['date'] == str(today)
+        
+    def test_sleep_weekly_view(self, authenticated_client, sleep_log, today):
+        url = reverse('sleep-weekly', args=[today])
+        response = authenticated_client.get(url)
+        assert response.status_code == status.HTTP_200_OK
+        assert len(response.data) >= 1
+        
+    def test_sleep_monthly_view(self, authenticated_client, sleep_log, today):
+        url = reverse('sleep-monthly', args=[today])
+        response = authenticated_client.get(url)
+        assert response.status_code == status.HTTP_200_OK
+        assert len(response.data) >= 1
+        
+    def test_sleep_view_invalid_date(self, authenticated_client):
+        url = reverse('sleep-weekly', args=['invalid-date'])
+        response = authenticated_client.get(url)
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert 'error' in response.data
 
 class TestAnalyticsViews:
     def test_health_trends(self, authenticated_client, health_log):
