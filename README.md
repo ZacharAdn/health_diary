@@ -10,6 +10,7 @@ A health diary application built with Django and REST API that allows users to t
 - **Sleep Tracking**: Monitor sleep duration and quality
 - **Health Analytics**: Correlate food with health metrics and identify potential triggers
 - **Export Data**: Export user data for external analysis
+- **Frontend Interface**: Simple HTML/CSS/JS frontend for interacting with the API
 
 ## Setup and Installation
 
@@ -50,12 +51,31 @@ python manage.py createsuperuser
 
 ## Running the Application
 
+### Backend
+
 ```bash
 # Start the development server
 python manage.py runserver
 ```
 
 The server will start at http://127.0.0.1:8000/
+
+### Frontend
+
+The application includes a simple frontend interface to interact with the API.
+
+#### Option 1: Direct browser access
+Simply open the `frontend/index.html` file in your browser.
+
+#### Option 2: Using a static server
+```bash
+# If you have Node.js installed, you can use http-server
+npm install -g http-server
+cd frontend
+http-server
+```
+
+Visit the URL provided by http-server (usually http://localhost:8080) in your browser.
 
 ## API Documentation
 
@@ -124,6 +144,18 @@ Make sure to always activate the virtual environment before running any Django c
 source health_diary_venv/bin/activate
 ```
 
+## Frontend Features
+
+The frontend interface includes:
+
+- User registration and login
+- Dashboard with health metrics visualization
+- Forms for adding meals, health logs, and sleep data
+- Analytics view for insights on health and food correlations
+- Responsive design with right-to-left (RTL) Hebrew support
+
+For more information about the frontend, see the [Frontend README](frontend/README.md).
+
 ## Development
 
 ### Project Structure
@@ -131,6 +163,7 @@ source health_diary_venv/bin/activate
 - `core/`: Main application with models, views, and services
 - `health_diary_project/`: Project settings and main URL configuration
 - `docs/`: Documentation files including user stories and testing strategy
+- `frontend/`: Simple HTML/CSS/JS frontend interface
 
 ### Contributing
 

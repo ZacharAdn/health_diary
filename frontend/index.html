@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>יומן בריאות</title>
+    <link rel="stylesheet" href="static/css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <nav>
+                <div class="nav-logo">יומן בריאות</div>
+                <div class="nav-links auth-required hidden">
+                    <a href="#" data-page="dashboard">דף ראשי</a>
+                    <a href="#" data-page="meal-form">הוסף ארוחה</a>
+                    <a href="#" data-page="health-log-form">הוסף רשומת בריאות</a>
+                    <a href="#" data-page="sleep-form">הוסף נתוני שינה</a>
+                    <a href="#" data-page="analytics">אנליטיקות</a>
+                </div>
+                <div class="user-info auth-required hidden">
+                    <span id="user-name"></span>
+                    <a href="#" id="logout-btn" class="btn btn-secondary">התנתק</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+    
+    <div id="alerts" class="container" style="margin-top: 1rem;"></div>
+    
+    <!-- Login Page -->
+    <div id="login-page" class="page auth-not-required">
+        <div class="container">
+            <div id="login-container" class="form-container">
+                <h2 class="form-title">התחברות</h2>
+                <form id="login-form">
+                    <div class="form-group">
+                        <label for="login-username">שם משתמש</label>
+                        <input type="text" id="login-username" name="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="login-password">סיסמה</label>
+                        <input type="password" id="login-password" name="password" required>
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-block">התחבר</button>
+                    </div>
+                </form>
+                <p class="text-center">אין לך חשבון? <a href="#" id="show-register">הירשם עכשיו</a></p>
+            </div>
+            
+            <div id="register-container" class="form-container hidden">
+                <h2 class="form-title">הרשמה</h2>
+                <form id="register-form">
+                    <div class="form-group">
+                        <label for="register-username">שם משתמש</label>
+                        <input type="text" id="register-username" name="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="register-email">אימייל</label>
+                        <input type="email" id="register-email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="register-password">סיסמה</label>
+                        <input type="password" id="register-password" name="password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="register-password2">אימות סיסמה</label>
+                        <input type="password" id="register-password2" name="password2" required>
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-block">הירשם</button>
+                    </div>
+                </form>
+                <p class="text-center">יש לך כבר חשבון? <a href="#" id="show-login">התחבר</a></p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Dashboard Page -->
+    <div id="dashboard-page" class="page auth-required hidden">
+        <div class="container">
+            <h1>שלום, <span id="user-greeting"></span>!</h1>
+            <p class="dashboard-intro">ברוך הבא ליומן הבריאות שלך. כאן תוכל לעקוב אחר הארוחות, מדדי הבריאות ונתוני השינה שלך.</p>
+            
+            <div class="quick-actions">
+                <h3>פעולות מהירות</h3>
+                <div class="actions-buttons">
+                    <a href="#" data-page="meal-form" class="btn">הוסף ארוחה</a>
+                    <a href="#" data-page="health-log-form" class="btn">הוסף רשומת בריאות</a>
+                    <a href="#" data-page="sleep-form" class="btn">הוסף נתוני שינה</a>
+                </div>
+            </div>
+            
+            <div class="dashboard-sections">
+                <!-- Recent Meals Section -->
+                <div id="recent-meals" class="dashboard-section">
+                    <div class="loading"></div>
+                </div>
+                
+                <!-- Health Trends Section -->
+                <div id="health-trends" class="dashboard-section">
+                    <div class="loading"></div>
+                </div>
+                
+                <!-- Health Analytics Section -->
+                <div id="health-analytics" class="dashboard-section">
+                    <div class="loading"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Add Meal Form -->
+    <div id="meal-form-page" class="page auth-required hidden">
+        <div class="container">
+            <div class="form-container">
+                <h2 class="form-title">הוספת ארוחה</h2>
+                <form id="meal-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="meal-date">תאריך</label>
+                            <input type="date" id="meal-date" name="date" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="meal-time">שעה</label>
+                            <input type="time" id="meal-time" name="time" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="meal-type">סוג ארוחה</label>
+                        <select id="meal-type" name="meal_type" required>
+                            <option value="">בחר סוג ארוחה</option>
+                            <option value="breakfast">ארוחת בוקר</option>
+                            <option value="lunch">ארוחת צהריים</option>
+                            <option value="dinner">ארוחת ערב</option>
+                            <option value="snack">חטיף</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="meal-notes">הערות לארוחה</label>
+                        <textarea id="meal-notes" name="notes" rows="2"></textarea>
+                    </div>
+                    
+                    <h3>הוספת מזון</h3>
+                    <div class="form-group">
+                        <label for="meal-food">בחר מזון</label>
+                        <select id="meal-food" name="food_id" required>
+                            <option value="">טוען מזונות...</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="meal-food-amount">כמות (גרם)</label>
+                        <input type="number" id="meal-food-amount" name="amount" required min="1">
+                    </div>
+                    <div class="form-group">
+                        <label for="meal-food-notes">הערות למזון</label>
+                        <textarea id="meal-food-notes" name="food_notes" rows="2"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-block">שמור ארוחה</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Add Health Log Form -->
+    <div id="health-log-form-page" class="page auth-required hidden">
+        <div class="container">
+            <div class="form-container">
+                <h2 class="form-title">הוספת רשומת בריאות</h2>
+                <form id="health-log-form">
+                    <div class="form-group">
+                        <label for="health-date">תאריך</label>
+                        <input type="date" id="health-date" name="date" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="physical-feeling">הרגשה פיזית (1-5)</label>
+                        <select id="physical-feeling" name="physical_feeling" required>
+                            <option value="">בחר דירוג</option>
+                            <option value="1">1 - גרוע מאוד</option>
+                            <option value="2">2 - גרוע</option>
+                            <option value="3">3 - בינוני</option>
+                            <option value="4">4 - טוב</option>
+                            <option value="5">5 - מצוין</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="mental-feeling">הרגשה נפשית (1-5)</label>
+                        <select id="mental-feeling" name="mental_feeling" required>
+                            <option value="">בחר דירוג</option>
+                            <option value="1">1 - גרוע מאוד</option>
+                            <option value="2">2 - גרוע</option>
+                            <option value="3">3 - בינוני</option>
+                            <option value="4">4 - טוב</option>
+                            <option value="5">5 - מצוין</option>
+                        </select>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="stool-quality">איכות יציאה</label>
+                            <select id="stool-quality" name="stool_quality">
+                                <option value="">בחר איכות</option>
+                                <option value="hard">קשה</option>
+                                <option value="normal">רגילה</option>
+                                <option value="soft">רכה</option>
+                                <option value="liquid">נוזלית</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="stool-count">מספר יציאות</label>
+                            <input type="number" id="stool-count" name="stool_count" min="0">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="symptoms">תסמינים</label>
+                        <textarea id="symptoms" name="symptoms" rows="2"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="weight">משקל (ק"ג)</label>
+                        <input type="number" id="weight" name="weight" step="0.1">
+                    </div>
+                    <div class="form-group">
+                        <label for="health-notes">הערות נוספות</label>
+                        <textarea id="health-notes" name="notes" rows="2"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-block">שמור נתוני בריאות</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Add Sleep Form -->
+    <div id="sleep-form-page" class="page auth-required hidden">
+        <div class="container">
+            <div class="form-container">
+                <h2 class="form-title">הוספת נתוני שינה</h2>
+                <form id="sleep-form">
+                    <div class="form-group">
+                        <label for="sleep-date">תאריך</label>
+                        <input type="date" id="sleep-date" name="date" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="sleep-duration">משך שינה (שעות)</label>
+                        <input type="number" id="sleep-duration" name="duration" step="0.1" min="0" max="24" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="sleep-quality">איכות שינה (1-5)</label>
+                        <select id="sleep-quality" name="quality" required>
+                            <option value="">בחר דירוג</option>
+                            <option value="1">1 - גרוע מאוד</option>
+                            <option value="2">2 - גרוע</option>
+                            <option value="3">3 - בינוני</option>
+                            <option value="4">4 - טוב</option>
+                            <option value="5">5 - מצוין</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="wake-up-ease">קלות התעוררות (1-5)</label>
+                        <select id="wake-up-ease" name="wake_up_ease" required>
+                            <option value="">בחר דירוג</option>
+                            <option value="1">1 - קשה מאוד</option>
+                            <option value="2">2 - קשה</option>
+                            <option value="3">3 - בינוני</option>
+                            <option value="4">4 - קל</option>
+                            <option value="5">5 - קל מאוד</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="energy-level">רמת אנרגיה (1-5)</label>
+                        <select id="energy-level" name="energy_level" required>
+                            <option value="">בחר דירוג</option>
+                            <option value="1">1 - נמוכה מאוד</option>
+                            <option value="2">2 - נמוכה</option>
+                            <option value="3">3 - בינונית</option>
+                            <option value="4">4 - גבוהה</option>
+                            <option value="5">5 - גבוהה מאוד</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="sleep-notes">הערות נוספות</label>
+                        <textarea id="sleep-notes" name="notes" rows="2"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-block">שמור נתוני שינה</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Analytics Page -->
+    <div id="analytics-page" class="page auth-required hidden">
+        <div class="container">
+            <h2>ניתוח נתונים מתקדם</h2>
+            <p>דף זה יציג ניתוחים מתקדמים של נתוני הבריאות והתזונה שלך.</p>
+            
+            <div class="analytics-sections">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>מזונות ותסמינים</h3>
+                    </div>
+                    <div class="card-body" id="food-symptoms-correlation">
+                        <div class="loading"></div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h3>ניתוח שינה</h3>
+                    </div>
+                    <div class="card-body" id="sleep-analysis">
+                        <div class="loading"></div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h3>מגמות ארוכות טווח</h3>
+                    </div>
+                    <div class="card-body" id="long-term-trends">
+                        <div class="loading"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <div class="container">
+            <p>&copy; 2023 יומן בריאות - כל הזכויות שמורות</p>
+        </div>
+    </footer>
+    
+    <script>
+        // Toggle between login and register forms
+        document.getElementById('show-register').addEventListener('click', function(e) {
+            e.preventDefault();
+            document.getElementById('login-container').classList.add('hidden');
+            document.getElementById('register-container').classList.remove('hidden');
+        });
+        
+        document.getElementById('show-login').addEventListener('click', function(e) {
+            e.preventDefault();
+            document.getElementById('register-container').classList.add('hidden');
+            document.getElementById('login-container').classList.remove('hidden');
+        });
+    </script>
+    <script src="static/js/app.js"></script>
+</body>
+</html> 
